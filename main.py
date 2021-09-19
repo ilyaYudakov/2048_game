@@ -1,6 +1,22 @@
 import pygame
 import sys
 from logics import *
+from database import get_best, cur
+
+GAMERS_DB = get_best()
+
+def draw_top_gamers():
+    font_top = pygame.font.SysFont('simsun', 30)
+    font_gamer = pygame.font.SysFont('simsun', 24)
+    text_head = font_top.render('Best tries: ', True, COLORS_TEXT)
+    screen.blit(text_head, (250, 5))
+    for index, gamer in enumerate(GAMERS_DB):
+        name, score = gamer
+        s = f'{index + 1}. {name} - {score}'
+        text_gamer = font_gamer.render(s, True, COLORS_TEXT)
+        screen.blit(text_gamer, (250, 30 + 30 * index))
+        print(index, gamer, score)
+
 
 
 def draw_interface(score, delta=0):
@@ -16,6 +32,7 @@ def draw_interface(score, delta=0):
         text_delta = font_delta.render(f'+{delta}', True, COLORS_TEXT)
         screen.blit(text_delta, (170, 65))
     pretty_print(mas)
+    draw_top_gamers()
     for row in range(BLOCKS):
         for column in range(BLOCKS):
             value = mas[row][column]
@@ -65,6 +82,9 @@ mas[1][2] = 2
 mas[3][0] = 4
 print(get_empty_list(mas))
 pretty_print(mas)
+
+# for gamer in get_best():
+#     print(gamer)
 
 pygame.init()
 

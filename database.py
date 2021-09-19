@@ -1,4 +1,4 @@
-import  sqlite3
+import sqlite3
 
 bd = sqlite3.connect('2048.sqlite')
 
@@ -9,15 +9,13 @@ create table if not exists RECORDS (
     score integer
 )''')
 
-cur.execute('''
-SELECT name gamer, max(score) score FROM RECORDS
-GROUP by name
-ORDER by score DESC
-limit 3
-''')
 
-result = cur.fetchall()
-print(result)
+def get_best():
+    cur.execute('''
+    SELECT name gamer, max(score) score FROM RECORDS
+    GROUP by name
+    ORDER by score DESC
+    limit 3
+    ''')
+    return cur.fetchall()
 
-
-cur.close()
