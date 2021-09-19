@@ -1,5 +1,7 @@
 import pygame
 import sys
+from logics import *
+
 
 def draw_interface():
     pygame.draw.rect(screen, WHITE, TITLE_REC)
@@ -18,7 +20,6 @@ def draw_interface():
                 text_y = h + (SIZE_BLOCK - font_h) / 2
                 screen.blit(text, (text_x, text_y))
 
-from logics import *
 
 mas = [
     [0, 0, 0, 0],
@@ -35,6 +36,9 @@ COLORS = {
     2: (255, 255, 255),
     4: (255, 255, 128),
     8: (255, 255, 0),
+    16: (255, 235, 255),
+    32: (255, 235, 128),
+    64: (255, 235, 0),
 }
 
 BLOCKS = 4
@@ -56,14 +60,16 @@ pygame.display.set_caption('2048')
 draw_interface()
 pygame.display.update()
 
-
 while is_zero_in_mas(mas):
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:
-            draw_interface()
+            if event.key == pygame.K_LEFT:
+                mas = move_left(mas)
+            elif event.key == pygame.K_RIGHT:
+                mas = move_right(mas)
             empty = get_empty_list(mas)
             random.shuffle(empty)
             random_num = empty.pop()
