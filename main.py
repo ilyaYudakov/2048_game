@@ -3,9 +3,18 @@ import sys
 from logics import *
 
 
-def draw_interface():
+def draw_interface(score, delta=0):
     pygame.draw.rect(screen, WHITE, TITLE_REC)
     font = pygame.font.SysFont('stxingkai', 70)
+    font_score = pygame.font.SysFont('simsun', 48)
+    font_delta = pygame.font.SysFont('simsun', 32)
+    text_score = font_score.render('Score: ', True, COLORS_TEXT)
+    text_score_value = font_score.render(f'{score}', True, COLORS_TEXT)
+    screen.blit(text_score, (20, 35))
+    screen.blit(text_score_value, (175, 35))
+    if delta > 0:
+        text_delta = font_delta.render(f'+{delta}', True, COLORS_TEXT)
+        screen.blit(text_delta, (170, 65))
     pretty_print(mas)
     for row in range(BLOCKS):
         for column in range(BLOCKS):
@@ -31,6 +40,9 @@ mas = [
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 GRAY = (130, 130, 130)
+
+COLORS_TEXT = (255, 127, 0)
+
 COLORS = {
     0: (130, 130, 130),
     2: (255, 255, 255),
@@ -47,6 +59,7 @@ MARGIN = 10
 WIDTH = BLOCKS * SIZE_BLOCK + (BLOCKS + 1) * MARGIN
 HEIGHT = WIDTH + 110
 TITLE_REC = pygame.Rect(0, 0, WIDTH, 110)
+score = 0
 
 mas[1][2] = 2
 mas[3][0] = 4
@@ -57,7 +70,7 @@ pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('2048')
-draw_interface()
+draw_interface(score)
 pygame.display.update()
 
 while is_zero_in_mas(mas) or can_move(mas):
@@ -66,19 +79,21 @@ while is_zero_in_mas(mas) or can_move(mas):
             pygame.quit()
             sys.exit(0)
         elif event.type == pygame.KEYDOWN:
+            delta = 0
             if event.key == pygame.K_LEFT:
-                mas = move_left(mas)
+                mas, delta = move_left(mas)
             elif event.key == pygame.K_RIGHT:
-                mas = move_right(mas)
+                mas, delta = move_right(mas)
             elif event.key == pygame.K_UP:
-                mas = move_up(mas)
+                mas, delta = move_up(mas)
             elif event.key == pygame.K_DOWN:
-                mas = move_down(mas)
+                mas, delta = move_down(mas)
+            score += delta
             empty = get_empty_list(mas)
             random.shuffle(empty)
             random_num = empty.pop()
             x, y = get_index_from_number(random_num)
             mas = insert_2_or_4(mas, x, y)
             print(f'Мы заполнили элемент под номером {random_num}')
-            draw_interface()
+            draw_interface(score, delta)
             pygame.display.update()
