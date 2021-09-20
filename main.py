@@ -5,6 +5,7 @@ from database import get_best, cur
 
 GAMERS_DB = get_best()
 
+
 def draw_top_gamers():
     font_top = pygame.font.SysFont('simsun', 30)
     font_gamer = pygame.font.SysFont('simsun', 24)
@@ -16,7 +17,6 @@ def draw_top_gamers():
         text_gamer = font_gamer.render(s, True, COLORS_TEXT)
         screen.blit(text_gamer, (250, 30 + 30 * index))
         print(index, gamer, score)
-
 
 
 def draw_interface(score, delta=0):
@@ -68,6 +68,9 @@ COLORS = {
     16: (255, 235, 255),
     32: (255, 235, 128),
     64: (255, 235, 0),
+    128: (255, 215, 255),
+    256: (255, 215, 128),
+    512: (255, 215, 0),
 }
 
 BLOCKS = 4
@@ -77,6 +80,7 @@ WIDTH = BLOCKS * SIZE_BLOCK + (BLOCKS + 1) * MARGIN
 HEIGHT = WIDTH + 110
 TITLE_REC = pygame.Rect(0, 0, WIDTH, 110)
 score = 0
+USERNAME = None
 
 mas[1][2] = 2
 mas[3][0] = 4
@@ -90,6 +94,51 @@ pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('2048')
+
+def draw_intro():
+    img2028 = pygame.image.load('2048_.jpg')
+    font = pygame.font.SysFont('stxingkai', 70)
+    text_welcome = font.render('Welcome!', False, WHITE)
+
+    name = 'Введите имя'
+    is_find_name = False
+
+    while not is_find_name:
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit(0)
+            elif event.type == pygame.KEYDOWN:
+                if event.unicode.isalpha():
+                    if name == 'Введите имя':
+                        name = event.unicode
+                    else:
+                        name += event.unicode
+                elif event.key == pygame.K_BACKSPACE:
+                    name = name[:-1]
+                elif event.key == pygame.K_RETURN:
+                    if len(name) > 2:
+                        global USERNAME
+                        USERNAME = name
+                        is_find_name = True
+                        break
+        screen.fill(BLACK)
+
+        text_name = font.render(name, False, WHITE)
+        rect_name = text_name.get_rect()
+        rect_name.center = screen.get_rect().center
+
+        screen.blit(pygame.transform.scale(img2028, [200, 200]), [10, 10])
+        screen.blit(text_welcome, (233, 90))
+        screen.blit(text_name, rect_name)
+        pygame.display.update()
+    screen.fill(BLACK)
+
+draw_intro()
+
+
+
 draw_interface(score)
 pygame.display.update()
 
