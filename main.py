@@ -1,7 +1,7 @@
 import pygame
 import sys
 from logics import *
-from database import get_best, cur
+from database import get_best, cur, insert_result
 
 GAMERS_DB = get_best()
 
