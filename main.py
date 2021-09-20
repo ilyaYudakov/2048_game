@@ -163,33 +163,33 @@ draw_intro()
 draw_interface(score)
 pygame.display.update()
 
-# while is_zero_in_mas(mas) or can_move(mas):
-#     for event in pygame.event.get():
-#         if event.type == pygame.QUIT:
-#             pygame.quit()
-#             sys.exit(0)
-#         elif event.type == pygame.KEYDOWN:
-#             delta = 0
-#             if event.key == pygame.K_LEFT:
-#                 mas, delta = move_left(mas)
-#             elif event.key == pygame.K_RIGHT:
-#                 mas, delta = move_right(mas)
-#             elif event.key == pygame.K_UP:
-#                 mas, delta = move_up(mas)
-#             elif event.key == pygame.K_DOWN:
-#                 mas, delta = move_down(mas)
-#             score += delta
-#             if is_zero_in_mas(mas):
-#                 empty = get_empty_list(mas)
-#                 random.shuffle(empty)
-#                 random_num = empty.pop()
-#                 x, y = get_index_from_number(random_num)
-#                 mas = insert_2_or_4(mas, x, y)
-#                 print(f'Мы заполнили элемент под номером {random_num}')
-#
-#             draw_interface(score, delta)
-#             pygame.display.update()
-#
-#     print(USERNAME)
+while is_zero_in_mas(mas) or can_move(mas):
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit(0)
+        elif event.type == pygame.KEYDOWN:
+            delta = 0
+            if event.key == pygame.K_LEFT:
+                mas, delta = move_left(mas)
+            elif event.key == pygame.K_RIGHT:
+                mas, delta = move_right(mas)
+            elif event.key == pygame.K_UP:
+                mas, delta = move_up(mas)
+            elif event.key == pygame.K_DOWN:
+                mas, delta = move_down(mas)
+            score += delta
+            if is_zero_in_mas(mas):
+                empty = get_empty_list(mas)
+                random.shuffle(empty)
+                random_num = empty.pop()
+                x, y = get_index_from_number(random_num)
+                mas = insert_2_or_4(mas, x, y)
+                print(f'Мы заполнили элемент под номером {random_num}')
+
+            draw_interface(score, delta)
+            pygame.display.update()
+
+    print(USERNAME)
 
 draw_game_over()
