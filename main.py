@@ -31,8 +31,8 @@ def draw_interface(score, delta=0):
     if delta > 0:
         text_delta = font_delta.render(f'+{delta}', True, COLORS_TEXT)
         screen.blit(text_delta, (170, 65))
-    pretty_print(mas)
     draw_top_gamers()
+    pretty_print(mas)
     for row in range(BLOCKS):
         for column in range(BLOCKS):
             value = mas[row][column]
@@ -46,13 +46,6 @@ def draw_interface(score, delta=0):
                 text_y = h + (SIZE_BLOCK - font_h) / 2
                 screen.blit(text, (text_x, text_y))
 
-
-mas = [
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-    [0, 0, 0, 0],
-]
 
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
@@ -79,21 +72,38 @@ MARGIN = 10
 WIDTH = BLOCKS * SIZE_BLOCK + (BLOCKS + 1) * MARGIN
 HEIGHT = WIDTH + 110
 TITLE_REC = pygame.Rect(0, 0, WIDTH, 110)
-score = 0
-USERNAME = None
 
-mas[1][2] = 2
-mas[3][0] = 4
+
+def init_const():
+    global score, mas
+    score = 0
+    mas = [
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+        [0, 0, 0, 0],
+    ]
+    empty = get_empty_list(mas)
+    random.shuffle(empty)
+    random_num1 = empty.pop()
+    random_num2 = empty.pop()
+    x1, y1 = get_index_from_number(random_num1)
+    mas = insert_2_or_4(mas, x1, y1)
+    x2, y2 = get_index_from_number(random_num2)
+    mas = insert_2_or_4(mas, x2, y2)
+
+
+score = None
+mas = None
+init_const()
+USERNAME = None
 print(get_empty_list(mas))
 pretty_print(mas)
-
-# for gamer in get_best():
-#     print(gamer)
-
 pygame.init()
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 pygame.display.set_caption('2048')
+
 
 def draw_intro():
     img2028 = pygame.image.load('2048_.jpg')
@@ -134,7 +144,9 @@ def draw_intro():
         pygame.display.update()
     screen.fill(BLACK)
 
+
 def draw_game_over():
+    global USERNAME, mas
     img2028 = pygame.image.load('2048_.jpg')
     font = pygame.font.SysFont('stxingkai', 65)
     text_game_over = font.render('Game over!', False, WHITE)
@@ -146,50 +158,64 @@ def draw_game_over():
     else:
         text = f'Рекорд {best_score}'
     text_record = font.render(text, False, WHITE)
+    insert_result(USERNAME, score)
 
-    while True:
+    make_decision = False
+    while not make_decision:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit(0)
+            elif event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_SPACE:
+                    make_decision = True
+                    init_const()
+                elif event.key == pygame.K_RETURN:
+                    USERNAME = None
+                    make_decision = True
+                    init_const()
         screen.fill(BLACK)
         screen.blit(text_game_over, (220, 80))
         screen.blit(text_score, (30, 250))
         screen.blit(text_record, (30, 300))
         screen.blit(pygame.transform.scale(img2028, [200, 200]), [10, 10])
         pygame.display.update()
+    screen.fill(BLACK)
 
-draw_intro()
-draw_interface(score)
-pygame.display.update()
 
-while is_zero_in_mas(mas) or can_move(mas):
-    for event in pygame.event.get():
-        if event.type == pygame.QUIT:
-            pygame.quit()
-            sys.exit(0)
-        elif event.type == pygame.KEYDOWN:
-            delta = 0
-            if event.key == pygame.K_LEFT:
-                mas, delta = move_left(mas)
-            elif event.key == pygame.K_RIGHT:
-                mas, delta = move_right(mas)
-            elif event.key == pygame.K_UP:
-                mas, delta = move_up(mas)
-            elif event.key == pygame.K_DOWN:
-                mas, delta = move_down(mas)
-            score += delta
-            if is_zero_in_mas(mas):
-                empty = get_empty_list(mas)
-                random.shuffle(empty)
-                random_num = empty.pop()
-                x, y = get_index_from_number(random_num)
-                mas = insert_2_or_4(mas, x, y)
-                print(f'Мы заполнили элемент под номером {random_num}')
+def game_loop():
+    global score, mas
+    while is_zero_in_mas(mas) or can_move(mas):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit(0)
+            elif event.type == pygame.KEYDOWN:
+                delta = 0
+                if event.key == pygame.K_LEFT:
+                    mas, delta = move_left(mas)
+                elif event.key == pygame.K_RIGHT:
+                    mas, delta = move_right(mas)
+                elif event.key == pygame.K_UP:
+                    mas, delta = move_up(mas)
+                elif event.key == pygame.K_DOWN:
+                    mas, delta = move_down(mas)
+                score += delta
+                if is_zero_in_mas(mas):
+                    empty = get_empty_list(mas)
+                    random.shuffle(empty)
+                    random_num = empty.pop()
+                    x, y = get_index_from_number(random_num)
+                    mas = insert_2_or_4(mas, x, y)
+                    print(f'Мы заполнили элемент под номером {random_num}')
 
-            draw_interface(score, delta)
-            pygame.display.update()
+                draw_interface(score, delta)
+                pygame.display.update()
+        # print(USERNAME)
 
-    print(USERNAME)
 
-draw_game_over()
+while True:
+    if USERNAME is None:
+        draw_intro()
+    game_loop()
+    draw_game_over()
