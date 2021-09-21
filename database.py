@@ -25,6 +25,3 @@ def get_best():
     limit 3
     ''')
     return cur.fetchall()
-
-
-insert_result('QQQ', 777)
